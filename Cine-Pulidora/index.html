@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Cines Pulidora - Ver películas con tu familia</title>
+       <meta name="description" content="Cines Pulidora es una cine para encontrar y ver películas con tu familia.">
+<link rel="stylesheet" href="estilos/estilos.css">
+</head>
+<body>
+    <header class="hero">
+        <h1>Bienvenido a Cine Pulidora</h1>
+        <p>Cine Pulidora es un cine en Tunja ideal para disfrutar películas a buen precio, con un ambiente cómodo, funciones de estreno y una experiencia sencilla pero entretenida para ir con amigos o familia.</p>
+        <form class="busqueda-form" id="searchForm">
+            <input id="searchInput" type="search" placeholder="Buscar película..." aria-label="Buscar película">
+            <button type="submit">Buscar</button>
+        </form>
+    </header>
+
+    <section class="cartelera">
+        <h2>Cartelera</h2>
+        <div class="Catalogo">
+<div class="Pelicula">
+<img src="assets/Harry Potter copia png.jpg" alt="">
+<h3>Harry Potter y El Cáliz de Fuego</h3>
+<button onclick="window.location.href='comprar.html'">Comprar</button>
+</div>
+
+<div class="Pelicula">
+    <h3>Minions Paradise</h3>
+    <img src="assets/Poster Minions final.jpg.jpeg" alt="">
+<button onclick="window.location.href='comprar.html'">Comprar</button>
+</div>
+
+<div class="Pelicula">
+<img src="assets/C ars.jpeg" alt="">
+<h3>Cars</h3>
+<button onclick="window.location.href='comprar.html'">Comprar</button>
+</div>
+
+<div class="Pelicula">
+<img src="assets/Fnaf 3 copia.jpg" alt="">
+<h3>Fnf 3 </h3>
+<button onclick="window.location.href='comprar.html'">Comprar</button>
+</div>
+
+<div class="Pelicula">
+<img src="assets/Estrangero sen los things copia.jpg" alt="">
+<h3>Estragenro Sen Los Thing</h3>
+<button onclick="window.location.href='comprar.html'">Comprar</button>
+</div>
+
+<div class="Pelicula">
+    <img src="assets/A silent Boys.jpg" alt="">
+    <h3>A silent Boys</h3>
+    <button onclick="window.location.href='comprar.html'">Comprar</button>
+</div>
+<div class="Pelicula">
+    <img src="assets/whiplash.jpeg" alt="">
+    <h3>Whiplash</h3>
+    <button onclick="window.location.href='comprar.html'">Comprar</button>
+</div>
+<div class="Pelicula">
+    <img src="assets/spidermananimado.jpeg" alt="">
+    <h3>Spiderverso</h3>
+    <button onclick="window.location.href='comprar.html'">Comprar</button>
+</div>
+<div class="Pelicula">
+    <img src="assets/LA SIRENITA SHARA CARDENAS.jpg.jpeg" alt="">
+    <h3>La sirenita</h3>
+    <button onclick="window.location.href='comprar.html'">Comprar</button>
+</div>
+<div class="Pelicula">
+    <img src="assets/laura campos-como entrenar a tu dragon.jpg.jpeg" alt="">
+    <h3>Como entrenar a tu dragon</h3>
+    <button onclick="window.location.href='comprar.html'">Comprar</button>
+</div>
+<div class="Pelicula">
+    <img src="assets/karen galindo - la casa de papel.jpg.jpeg" alt="">
+    <h3>La casa de papel</h3>
+    <button onclick="window.location.href='comprar.html'">Comprar</button>
+</div>
+<div class="Pelicula">
+    <img src="assets/five nights at freddy 3.jpeg" alt="">
+    <h3>Five Nights At Freddy 3</h3>
+    <button onclick="window.location.href='comprar.html'">Comprar</button>
+</div>
+<div class="Pelicula">
+    <img src="assets/soul eater.jpeg" alt="">
+    <h3>Soul Eater</h3>
+    <button onclick="window.location.href='comprar.html'">Comprar</button>
+</div>
+<div class="Pelicula">
+    <img src="assets/punisher.jpeg" alt="">
+    <h3>Punisher</h3>
+    <button onclick="window.location.href='comprar.html'">Comprar</button>
+</div>
+<div class="Pelicula">
+    <img src="assets/UP.png" alt="">
+    <h3>Up</h3>
+    <button onclick="window.location.href='comprar.html'">Comprar</button>
+</div>
+<div class="Pelicula">
+    <img src="assets/gravity falls.jpeg" alt="">
+    <h3>Gravity Falls</h3>
+    <button onclick="window.location.href='comprar.html'">Comprar</button>
+</div>
+
+
+</div>
+
+        <div class="paginacion" aria-label="Paginación de cartelera"></div>
+
+    </section>
+
+    <script>
+        const peliculas = Array.from(document.querySelectorAll('.Pelicula'));
+        const itemsPorPagina = 12;
+        let paginaActual = 1;
+
+        const paginacionElement = document.querySelector('.paginacion');
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+
+        function filtrarPeliculas() {
+            const termino = searchInput.value.trim().toLowerCase();
+            peliculas.forEach((pelicula) => {
+                const titulo = pelicula.querySelector('h3').textContent.toLowerCase();
+                pelicula.dataset.match = titulo.includes(termino) ? '1' : '0';
+            });
+            paginaActual = 1;
+            mostrarPagina();
+        }
+
+        function mostrarPagina() {
+            const elementosFiltrados = peliculas.filter((pelicula) => pelicula.dataset.match !== '0');
+            const totalPaginas = Math.max(1, Math.ceil(elementosFiltrados.length / itemsPorPagina));
+            if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+
+            peliculas.forEach((pelicula) => {
+                pelicula.style.display = 'none';
+            });
+
+            const inicio = (paginaActual - 1) * itemsPorPagina;
+            const fin = inicio + itemsPorPagina;
+            elementosFiltrados.slice(inicio, fin).forEach((pelicula) => {
+                pelicula.style.display = 'block';
+            });
+
+            actualizarPaginacion(totalPaginas);
+        }
+
+        function actualizarPaginacion(totalPaginas) {
+            paginacionElement.innerHTML = '';
+            if (totalPaginas <= 1) return;
+
+            const prev = document.createElement('button');
+            prev.type = 'button';
+            prev.textContent = 'Anterior';
+            prev.disabled = paginaActual === 1;
+            prev.addEventListener('click', () => {
+                if (paginaActual > 1) {
+                    paginaActual -= 1;
+                    mostrarPagina();
+                }
+            });
+            paginacionElement.appendChild(prev);
+
+            for (let i = 1; i <= totalPaginas; i += 1) {
+                const pageButton = document.createElement('button');
+                pageButton.type = 'button';
+                pageButton.textContent = i;
+                pageButton.className = i === paginaActual ? 'pagina-activa' : '';
+                pageButton.addEventListener('click', () => {
+                    paginaActual = i;
+                    mostrarPagina();
+                });
+                paginacionElement.appendChild(pageButton);
+            }
+
+            const next = document.createElement('button');
+            next.type = 'button';
+            next.textContent = 'Siguiente';
+            next.disabled = paginaActual === totalPaginas;
+            next.addEventListener('click', () => {
+                if (paginaActual < totalPaginas) {
+                    paginaActual += 1;
+                    mostrarPagina();
+                }
+            });
+            paginacionElement.appendChild(next);
+        }
+
+        searchForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            filtrarPeliculas();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            peliculas.forEach((pelicula) => (pelicula.dataset.match = '1'));
+            mostrarPagina();
+        });
+    </script>
+
+</body>
+</html>
