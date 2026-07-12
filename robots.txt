@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kevindavidlaif-cmd.github.io/CineS-Pulidora/sitemap.xml
